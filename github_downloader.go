@@ -58,12 +58,12 @@ func GetGithubRelease(url, fallbackUrl string) (*GithubRelease, error) {
 
 	if res.StatusCode >= 300 {
 		isRateLimitedOrBlocked := res.StatusCode == 401 || res.StatusCode == 403 || res.StatusCode == 429
-		
+		triedFallback := url == fallbackUrl
 
 		// GitHub has a very strict 60 req/h rate limit and some (mostly indian) isps block github for some reason.
 		
 		if isRateLimitedOrBlocked && !triedFallback {
-			Log.Error(fmt.Sprintf("Failed to fetch %s (status code %d)))
+			Log.Error(fmt.Sprintf("Failed to fetch %s (status code %d). Trying fallback url %s", url, res.StatusCode, fallbackUrl))
 			return nil,errors.New(res.Status)
 		}
 
